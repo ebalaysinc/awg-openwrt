@@ -42,30 +42,6 @@ jobs:
       fail-fast: false
 
     steps:
-      - name: Check if release file exists
-        id: check_release
-        run: |
-          postfix="${{ matrix.build_env.tag }}_${{ matrix.build_env.vermagic }}_${{ matrix.build_env.pkgarch}}_${{ matrix.build_env.target}}_${{ matrix.build_env.subtarget}}"
-          RELEASE_FILE="kmod-amneziawg_${postfix}.ipk"
-          TAG=${{ matrix.build_env.tag }}
-
-          echo "Checking for release file: $RELEASE_FILE in release: $TAG"
-
-          # Используем GitHub CLI для проверки наличия файла в релизе
-          if gh release view "$TAG" --repo Slava-Shchipunov/awg-openwrt --json assets --jq ".assets | .[].name" | grep -q "$RELEASE_FILE"; then
-            echo "Release file $RELEASE_FILE already exists. Skipping job."
-            echo "FILE_EXISTS=true" >> $GITHUB_ENV
-          else
-            echo "FILE_EXISTS=false" >> $GITHUB_ENV
-          fi
-
-      # Прерываем job'у, если файл уже существует
-      - name: Skip job if release file exists
-        if: env.FILE_EXISTS == 'true'
-        run: |
-          echo "Skipping job as release file already exists."
-          exit 0
-
       - name: Get snapshot commit SHA and device ARCH
         if: env.FILE_EXISTS == 'false'
         run: |
