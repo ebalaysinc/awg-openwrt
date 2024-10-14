@@ -42,6 +42,10 @@ jobs:
       fail-fast: false
 
     steps:
+      - name: Check if release file exists
+        id: check_release
+        run: |
+          echo "FILE_EXISTS=false" >> $GITHUB_ENV
       - name: Get snapshot commit SHA and device ARCH
         if: env.FILE_EXISTS == 'false'
         run: |
